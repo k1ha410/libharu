@@ -13,10 +13,16 @@
  * It is provided "as is" without express or implied warranty.
  *
  * 2006.08.03 update.
+ * 
+ * Copyright (c) 2010 Hashimoto
+ *
+ * 2010.11.17 corresponds to the specification of ruby 1.9.x
+ * 2010.11.17 bug-fix NUM2INT to INT2NUM (ex. hpdf_font_get_descent )
+ *
  */
 
 #include "ruby.h"
-#include "rubyio.h"
+#include "ruby/io.h"
 
 #include "hpdf.h"
 #include "hpdf_conf.h"
@@ -144,7 +150,7 @@ hpdf_save_to_file (VALUE obj, VALUE file_name)
 
     HPDF_PTRACE(("hpdf_save_to_file pdf=%p\n", pdf));
 
-    ret = HPDF_SaveToFile(pdf, STR2CSTR(file_name));
+    ret = HPDF_SaveToFile(pdf, StringValuePtr(file_name));
 
     return INT2NUM(ret);
 }
@@ -456,12 +462,12 @@ hpdf_get_font (VALUE obj, VALUE font_name, VALUE encoding_name)
     const char *s1;
     const char *s2;
 
-    s1 = STR2CSTR(font_name);
+    s1 = StringValuePtr(font_name);
 
     if (encoding_name == Qnil)
         s2 = NULL;
     else {
-        s2 = STR2CSTR(encoding_name);
+        s2 = StringValuePtr(encoding_name);
 
         if (HPDF_StrLen(s2, -1) == 0)
             s2 = NULL;
@@ -484,8 +490,8 @@ hpdf_load_type1font_from_file (VALUE obj, VALUE afm, VALUE pfa)
     const char *s1;
     const char *s2;
 
-    s1 = STR2CSTR(afm);
-    s2 = STR2CSTR(pfa);
+    s1 = StringValuePtr(afm);
+    s2 = StringValuePtr(pfa);
 
     if (HPDF_StrLen(s2, -1) == 0)
         s2 = NULL;
@@ -507,7 +513,7 @@ hpdf_load_ttfont_from_file (VALUE obj, VALUE file_name, VALUE embedding)
     const char *s;
     HPDF_INT i;
 
-    s = STR2CSTR(file_name);
+    s = StringValuePtr(file_name);
     i = NUM2INT(embedding);
 
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
@@ -528,7 +534,7 @@ hpdf_load_ttfont_from_file2 (VALUE obj, VALUE file_name, VALUE index, VALUE embe
     HPDF_INT i1;
     HPDF_INT i2;
 
-    s = STR2CSTR(file_name);
+    s = StringValuePtr(file_name);
     i1 = NUM2INT(index);
     i2 = NUM2INT(embedding);
 
@@ -554,7 +560,7 @@ hpdf_add_page_label (VALUE obj, VALUE page_num, VALUE style, VALUE first_page, V
     i1 = NUM2INT(page_num);
     i2 = NUM2INT(style);
     i3 = NUM2INT(first_page);
-    s = STR2CSTR(prefix);
+    s = StringValuePtr(prefix);
 
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
@@ -641,7 +647,7 @@ hpdf_create_outline (VALUE obj, VALUE parent, VALUE title, VALUE encoder)
     if (HPDF_StrCmp(rb_obj_classname(encoder), "HPDFEncoder") == 0)
         Data_Get_Struct(encoder, HPDF_Encoder_Rec, e);
 
-    s = STR2CSTR(title);
+    s = StringValuePtr(title);
 
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
@@ -856,7 +862,7 @@ hpdf_get_encoder (VALUE obj, VALUE encoding_name)
     HPDF_Doc pdf;
     const char *s1;
 
-    s1 = STR2CSTR(encoding_name);
+    s1 = StringValuePtr(encoding_name);
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
     HPDF_PTRACE(("hpdf_get_encoder pdf=%p\n", pdf));
@@ -888,7 +894,7 @@ hpdf_set_current_encoder (VALUE obj, VALUE encoding_name)
     HPDF_STATUS ret;
     const char *s1;
 
-    s1 = STR2CSTR(encoding_name);
+    s1 = StringValuePtr(encoding_name);
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
     HPDF_PTRACE(("hpdf_set_current_encoder pdf=%p\n", pdf));
@@ -921,7 +927,7 @@ hpdf_encoder_get_byte_type (VALUE obj, VALUE text, VALUE index)
     HPDF_INT i;
     HPDF_STATUS ret;
 
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     i = NUM2INT(index);
 
     Data_Get_Struct(obj, HPDF_Encoder_Rec, encoder);
@@ -1038,7 +1044,7 @@ hpdf_page_create_text_annot (VALUE obj, VALUE left, VALUE bottom, VALUE right, V
     if (HPDF_StrCmp(rb_obj_classname(encoder), "HPDFEncoder") == 0)
         Data_Get_Struct(encoder, HPDF_Encoder_Rec, e);
 
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
     rect.left = NUM2INT(left);
     rect.bottom = NUM2INT(bottom);
@@ -1085,7 +1091,7 @@ hpdf_page_create_uri_link_annot (VALUE obj, VALUE left, VALUE bottom, VALUE righ
     const char *s;
     HPDF_Annotation annot;
 
-    s = STR2CSTR(uri);
+    s = StringValuePtr(uri);
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
     rect.left = NUM2INT(left);
     rect.bottom = NUM2INT(bottom);
@@ -1178,7 +1184,7 @@ hpdf_load_png_image_from_file (VALUE obj, VALUE file_name)
     HPDF_Image image;
     const char *s;
 
-    s = STR2CSTR(file_name);
+    s = StringValuePtr(file_name);
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
     HPDF_PTRACE(("hpdf_load_png_image_from_file pdf=%p\n", pdf));
@@ -1196,7 +1202,7 @@ hpdf_load_jpeg_image_from_file (VALUE obj, VALUE file_name)
     HPDF_Image image;
     const char *s;
 
-    s = STR2CSTR(file_name);
+    s = StringValuePtr(file_name);
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
     HPDF_PTRACE(("hpdf_load_png_image_from_file pdf=%p\n", pdf));
@@ -1349,7 +1355,7 @@ hpdf_set_info_attr (VALUE obj, VALUE type, VALUE value)
     HPDF_STATUS ret;
 
     i = NUM2INT(type);
-    s = STR2CSTR(value);
+    s = StringValuePtr(value);
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
 
     HPDF_PTRACE(("hpdf_set_info_attr pdf=%p\n", pdf));
@@ -1386,7 +1392,7 @@ hpdf_set_info_date_attr (VALUE obj, VALUE type, VALUE year, VALUE month, VALUE d
     HPDF_STATUS ret;
 
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
-    s = STR2CSTR(ind);
+    s = StringValuePtr(ind);
     if (HPDF_StrLen(s, -1) != 1 || (s[0] != '+' && s[0] != '-' && s[0] != 'Z' && s[0] != ' ')) {
         rb_raise(rb_eHPDFError, "The eighth argument must be either of '+','-','Z',' '.");
     }
@@ -1418,8 +1424,8 @@ hpdf_set_password (VALUE obj, VALUE owner_passwd, VALUE user_passwd)
     HPDF_STATUS ret;
 
     Data_Get_Struct(obj, HPDF_Doc_Rec, pdf);
-    s1 = STR2CSTR(owner_passwd);
-    s2 = STR2CSTR(user_passwd);
+    s1 = StringValuePtr(owner_passwd);
+    s2 = StringValuePtr(user_passwd);
 
     HPDF_PTRACE(("hpdf_set_password pdf=%p\n", pdf));
 
@@ -1490,7 +1496,7 @@ hpdf_page_text_width (VALUE obj, VALUE text)
     const char *s;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
 
     HPDF_PTRACE(("hpdf_page_text_width page=%p\n", page));
 
@@ -1509,7 +1515,7 @@ hpdf_page_measure_text (VALUE obj, VALUE text, VALUE width, VALUE wordwrap)
     HPDF_INT ret;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     i1 = NUM2INT(width);
     i2 = NUM2INT(wordwrap);
 
@@ -1806,7 +1812,7 @@ hpdf_font_get_ascent (VALUE obj)
 
     i = HPDF_Font_GetAscent(font);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -1821,7 +1827,7 @@ hpdf_font_get_descent (VALUE obj)
 
     i = HPDF_Font_GetDescent(font);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -1836,7 +1842,7 @@ hpdf_font_get_x_height (VALUE obj)
 
     i = HPDF_Font_GetXHeight(font);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -1851,7 +1857,7 @@ hpdf_font_get_cap_height (VALUE obj)
 
     i = HPDF_Font_GetCapHeight(font);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -1933,7 +1939,7 @@ hpdf_page_get_line_cap (VALUE obj)
 
     i = HPDF_Page_GetLineCap(page);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -1948,7 +1954,7 @@ hpdf_page_get_line_join (VALUE obj)
 
     i = HPDF_Page_GetLineJoin(page);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -2084,7 +2090,7 @@ hpdf_page_get_text_rendering_mode (VALUE obj)
 
     i = HPDF_Page_GetTextRenderingMode(page);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -2259,7 +2265,7 @@ hpdf_page_get_stroking_color_space (VALUE obj)
 
     i = HPDF_Page_GetStrokingColorSpace(page);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -2274,7 +2280,7 @@ hpdf_page_get_filling_color_space (VALUE obj)
 
     i = HPDF_Page_GetFillingColorSpace(page);
 
-    return NUM2INT(i);
+    return INT2NUM(i);
 }
 
 static VALUE
@@ -2401,7 +2407,7 @@ hpdf_page_set_dash (VALUE obj, VALUE ptn, VALUE phase)
     HPDF_PTRACE(("hpdf_page_set_dash page=%p\n", page));
 
     dash_phase = NUM2INT(phase);
-    num_ptn = RARRAY(ptn)->len;
+    num_ptn = RARRAY_LEN(ptn);
     if (!num_ptn) {
         ret = HPDF_Page_SetDash(page, NULL, 0, 0);
         return INT2NUM(ret);
@@ -2410,7 +2416,7 @@ hpdf_page_set_dash (VALUE obj, VALUE ptn, VALUE phase)
     for (i = 0; i < 8; i++)
         dash_ptn[i] = 0;
 
-    pptn = RARRAY(ptn)->ptr;
+    pptn = RARRAY_PTR(ptn);
     for (i = 0; i < num_ptn; i++) {
         dash_ptn[i] = NUM2INT(*pptn);
 
@@ -3072,7 +3078,7 @@ hpdf_page_show_text (VALUE obj, VALUE text)
     const char *s;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
 
     HPDF_PTRACE(("hpdf_page_show_text page=%p\n", page));
 
@@ -3089,7 +3095,7 @@ hpdf_page_show_text_next_line (VALUE obj, VALUE text)
     const char *s;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
 
     HPDF_PTRACE(("hpdf_page_show_text_next_line page=%p\n", page));
 
@@ -3108,7 +3114,7 @@ hpdf_page_show_text_next_line_ex (VALUE obj, VALUE char_space, VALUE word_space,
     HPDF_REAL f2;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     f1 = NUM2DBL(char_space);
     f2 = NUM2DBL(word_space);
 
@@ -3369,7 +3375,7 @@ hpdf_page_text_out (VALUE obj, VALUE xpos, VALUE ypos, VALUE text)
     HPDF_REAL y;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     x = NUM2DBL(xpos);
     y = NUM2DBL(ypos);
 
@@ -3394,7 +3400,7 @@ hpdf_page_text_rect (VALUE obj, VALUE left, VALUE top, VALUE right, VALUE bottom
     HPDF_UINT i1;
 
     Data_Get_Struct(obj, HPDF_Dict_Rec, page);
-    s = STR2CSTR(text);
+    s = StringValuePtr(text);
     f1 = NUM2DBL(left);
     f2 = NUM2DBL(top);
     f3 = NUM2DBL(right);
