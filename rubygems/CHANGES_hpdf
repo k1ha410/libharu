@@ -1,0 +1,9 @@
+hpdf
+-------------------------------------------------------------------------------
+
+hpdf (snapshot version)
+ * BASE: libHaru snapshot version (2010/11/18) (version 2.3.0) 
+ * Ruby 1.9.2 support
+ * BUGFIX ruby ext fot libHaru
+
+

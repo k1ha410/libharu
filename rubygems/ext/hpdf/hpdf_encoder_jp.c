@@ -1,0 +1,1 @@
+../../../src/hpdf_encoder_jp.c
