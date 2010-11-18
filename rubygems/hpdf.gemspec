@@ -109,14 +109,14 @@ FILES=['LICENSE',
 
 Gem::Specification.new do |s|
 	s.name = %q{hpdf}
-  s.version = "2.3.0"
+  s.version = "2.3.0.pre0"
   s.platform = %q{ruby}
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.authors = ["Takeshi Kanno","Antony Dovgal","hashimoto (k1ha410)"]
   s.date = %q{2010-11-18}
-  s.description = %q{hpdf is ruby extension for Haru. Haru is a free, cross platform, open-sourced software library for generating PDF. It supports the following features. }
+  s.description = %q{hpdf is ruby binding for Haru. Haru is a free, cross platform, open-sourced software library for generating PDF. }
   s.email = %q{k1ha410@gmail.com}
   s.executables = []
   s.extensions = ["ext/hpdf/extconf.rb"]
@@ -124,5 +124,5 @@ Gem::Specification.new do |s|
   s.has_rdoc = false
   s.homepage = %q{https://github.com/k1ha410/libharu}
   s.required_ruby_version = Gem::Requirement.new("> 1.9.1")
-  s.summary = %q{hpdf is ruby extension for Haru(library for generating PDF)}
+  s.summary = %q{hpdf is ruby binding for Haru(library for generating PDF)}
 end 
